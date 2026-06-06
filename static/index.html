@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plateforme de gestion d'étudiants</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header>
+    <h1>🎓 Plateforme de gestion d'étudiants</h1>
+    <div id="session-info" class="hidden">
+      <span id="user-label"></span>
+      <button id="logout-btn" class="btn btn-ghost">Déconnexion</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Connexion -->
+    <section id="login-view" class="card">
+      <h2>Connexion</h2>
+      <form id="login-form">
+        <label>Email
+          <input type="email" id="login-email" value="admin@ecole.ma" required />
+        </label>
+        <label>Mot de passe
+          <input type="password" id="login-password" value="admin1234" required />
+        </label>
+        <button type="submit" class="btn btn-primary">Se connecter</button>
+        <p class="hint">Compte admin par défaut : admin@ecole.ma / admin1234</p>
+      </form>
+      <p id="login-error" class="error"></p>
+    </section>
+
+    <!-- Tableau de bord -->
+    <section id="dashboard" class="hidden">
+      <div class="card" id="student-form-card">
+        <h2>Ajouter un étudiant</h2>
+        <form id="student-form" class="grid">
+          <input id="s-first" placeholder="Prénom" required />
+          <input id="s-last" placeholder="Nom" required />
+          <input id="s-number" placeholder="N° étudiant" required />
+          <input id="s-email" type="email" placeholder="Email" required />
+          <input id="s-program" placeholder="Filière" />
+          <button type="submit" class="btn btn-primary">Créer</button>
+        </form>
+        <p id="student-error" class="error"></p>
+      </div>
+
+      <div class="card">
+        <h2>Liste des étudiants</h2>
+        <table id="students-table">
+          <thead>
+            <tr>
+              <th>N°</th><th>Nom complet</th><th>Filière</th>
+              <th>Email</th><th>Relevé</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
