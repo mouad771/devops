@@ -75,6 +75,8 @@ input {
 .btn-ghost { background: transparent; color: #fff; border: 1px solid #fff; }
 .btn-small { padding: 0.3rem 0.6rem; font-size: 0.8rem; }
 .btn-danger { background: var(--danger); color: #fff; }
+.btn-ghost-link { background: transparent; color: var(--primary); padding: 0.3rem 0.4rem; }
+.btn-ghost-link:hover { text-decoration: underline; }
 
 table { width: 100%; border-collapse: collapse; }
 th, td { text-align: left; padding: 0.6rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }

@@ -41,6 +41,28 @@ function logout() {
   render();
 }
 
+// Télécharge un relevé (CSV/PDF) en envoyant le jeton JWT puis déclenche
+// l'enregistrement du fichier via un blob (un simple lien <a> ne peut pas
+// transmettre l'en-tête Authorization).
+async function downloadTranscript(studentId, format) {
+  const res = await fetch(`/api/students/${studentId}/transcript.${format}`, {
+    headers: { Authorization: `Bearer ${state.token}` },
+  });
+  if (!res.ok) {
+    alert("Téléchargement impossible");
+    return;
+  }
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `releve_${studentId}.${format}`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 // --- Étudiants ---
 async function loadStudents() {
   const tbody = $("#students-table tbody");
@@ -54,8 +76,8 @@ async function loadStudents() {
       <td>${s.program || "-"}</td>
       <td>${s.email}</td>
       <td>
-        <a class="link" href="/api/students/${s.id}/transcript.csv" target="_blank">CSV</a>
-        <a class="link" href="/api/students/${s.id}/transcript.pdf" target="_blank">PDF</a>
+        <button class="btn btn-ghost-link btn-small" data-dl="${s.id}" data-fmt="csv">CSV</button>
+        <button class="btn btn-ghost-link btn-small" data-dl="${s.id}" data-fmt="pdf">PDF</button>
       </td>
       <td><button class="btn btn-danger btn-small" data-del="${s.id}">Supprimer</button></td>`;
     tbody.appendChild(tr);
@@ -65,6 +87,11 @@ async function loadStudents() {
       await api(`/api/students/${btn.dataset.del}`, { method: "DELETE" });
       loadStudents();
     })
+  );
+  tbody.querySelectorAll("[data-dl]").forEach((btn) =>
+    btn.addEventListener("click", () =>
+      downloadTranscript(btn.dataset.dl, btn.dataset.fmt)
+    )
   );
 }
 
