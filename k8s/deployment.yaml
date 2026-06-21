@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gestion-etudiants
+  labels:
+    app: gestion-etudiants
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gestion-etudiants
+  template:
+    metadata:
+      labels:
+        app: gestion-etudiants
+    spec:
+      containers:
+        - name: app
+          # Remplacer mouad771/devops par le nom du dépôt GitHub (image publiée sur ghcr.io).
+          image: ghcr.io/mouad771/devops:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: gestion-etudiants-config
+          env:
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gestion-etudiants-secret
+                  key: SECRET_KEY
+            - name: ADMIN_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: gestion-etudiants-secret
+                  key: ADMIN_EMAIL
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gestion-etudiants-secret
+                  key: ADMIN_PASSWORD
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi

@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: gestion_etudiants_db
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: gestion_etudiants
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d gestion_etudiants"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    image: gestion-etudiants:local
+    container_name: gestion_etudiants_app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg2://app:app@db:5432/gestion_etudiants
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@ecole.ma}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin1234}
+      ENVIRONMENT: production
+    ports:
+      - "8000:8000"
+
+volumes:
+  pgdata:
